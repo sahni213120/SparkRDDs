@@ -1,4 +1,4 @@
-package org.himanshu.test
+package org.himanshu.rdd
 
 import org.apache.spark.SparkConf
 import org.apache.spark.SparkContext
@@ -10,27 +10,29 @@ import org.apache.spark.SparkContext
  *
  */
 object GroupBy {
-  
-  def main (args : Array[String]) {
-    
+
+  def main(args: Array[String]) {
+
+    val filePath = args(0)
+
     val conf = new SparkConf().setAppName("Group By Example").setMaster("local")
-    
+
     val sc = new SparkContext(conf)
-    
+
     //Read a text file
-    val fileRDD = sc.textFile("src/main/resources/InputFile.txt")
-    
+    val fileRDD = sc.textFile(filePath)
+
     //Modify fileRDD to a key value RDD
-    val keyValueRDD = fileRDD.map { x => (x.split("|")) }.map { x => (x(0),1) }
-    
+    val keyValueRDD = fileRDD.map { x => (x.split("|")) }.map { x => (x(0), 1) }
+
     //Coung number of occurences by ID
-    val groupByRDD = keyValueRDD.reduceByKey((x,y) => (x+y))
-    
+    val groupByRDD = keyValueRDD.reduceByKey((x, y) => (x + y))
+
     groupByRDD.foreach(println)
-    
+
     //Change the format as required and write to an output file
-    groupByRDD.map(f => f._1 + "|" + f._2)saveAsTextFile("target/output")
-    
+    groupByRDD.map(f => f._1 + "|" + f._2).saveAsTextFile(args(1))
+
   }
-  
+
 }

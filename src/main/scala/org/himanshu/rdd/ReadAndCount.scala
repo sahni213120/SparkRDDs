@@ -1,4 +1,4 @@
-package org.himanshu.test
+package org.himanshu.rdd
 
 import org.apache.spark.SparkConf
 import org.apache.spark.SparkContext
@@ -16,7 +16,7 @@ object ReadAndCountFile {
     val sc = new SparkContext(conf)
 
     //Read a text file
-    val fileRDD = sc.textFile("src/main/resources/inputFile.txt")
+    val fileRDD = sc.textFile(args(0))
     
     //Count number of rows in an RDD and print
     println("Count in the file is " + fileRDD.count())
