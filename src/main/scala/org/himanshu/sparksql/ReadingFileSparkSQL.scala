@@ -6,14 +6,13 @@ import org.apache.spark.SparkContext
 /**
  * @author himanshu
  * Reading and querying a file using spark sql
- * 
+ *
  */
-object ReadingFileSparkSQL { 
-  
+object ReadingFileSparkSQL {
+
   def main(args: Array[String]) {
     
-    
-  
+
     //Initialize Spark Configuration
     val conf = new SparkConf().setAppName("Reading file example using spark SQL").setMaster("local")
 
@@ -46,9 +45,9 @@ object ReadingFileSparkSQL {
 
   }
 
-/**
- * Define schema of the input file  
- */
-case class Person(id: Int, firstName: String, lastName: String, country: String)
+  /**
+   * Define schema of the input file
+   */
+  case class Person(id: Int, firstName: String, lastName: String, country: String)
 
 }

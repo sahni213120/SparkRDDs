@@ -2,6 +2,7 @@ package org.himanshu.rdd
 
 import org.apache.spark.SparkConf
 import org.apache.spark.SparkContext
+import org.himanshu.helper.PropertiesHelper
 
 /**
  * @author himanshu
@@ -12,8 +13,12 @@ import org.apache.spark.SparkContext
 object GroupBy {
 
   def main(args: Array[String]) {
-
-    val filePath = args(0)
+    
+    val property = new PropertiesHelper(args, 2);
+    
+    val filePath = property.getValue("inputFile");
+    
+    val outputPath = property.getValue("outputPath");
 
     val conf = new SparkConf().setAppName("Group By Example").setMaster("local")
 
@@ -31,7 +36,7 @@ object GroupBy {
     groupByRDD.foreach(println)
 
     //Change the format as required and write to an output file
-    groupByRDD.map(f => f._1 + "|" + f._2).saveAsTextFile(args(1))
+    groupByRDD.map(f => f._1 + "|" + f._2).saveAsTextFile(outputPath)
 
   }
 

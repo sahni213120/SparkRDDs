@@ -31,7 +31,8 @@
 	</dependencies>
 
 	<build>
-		<sourceDirectory>src/main/scala</sourceDirectory>
+		<sourceDirectory>src/main/*</sourceDirectory>
+		
 		<!-- <pluginManagement> -->
 		<plugins>
 			<plugin>
