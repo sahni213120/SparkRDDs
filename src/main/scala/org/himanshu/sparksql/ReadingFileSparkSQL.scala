@@ -25,7 +25,7 @@ object ReadingFileSparkSQL {
     import sqlContext.implicits._
 
     //Create data frame by reading the input file
-    val person = sc.textFile(args(0)).map { _.split(",") }.
+    val person = sc.textFile("src/main/resources/InputFile.txt").map { _.split(",") }.
       map(p =>
         Person(p(0).trim.toInt, p(1), p(2), p(3).trim())).toDF()
 

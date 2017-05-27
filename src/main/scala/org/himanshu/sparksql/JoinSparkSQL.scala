@@ -14,6 +14,7 @@ object JoinSparkSQL {
 
   def main(args: Array[String]) {
 
+    System.setProperty("hadoop.home.dir", "D:\\winutils\\")
     //Set Spark conf
     val conf = new SparkConf().setAppName("Joining 2 files using Spark SQL").setMaster("local")
     //Set Spark Context
@@ -47,6 +48,8 @@ object JoinSparkSQL {
     val countByID = sqlContext.sql("select id, count(*) as ct from person group by id")
     //Show output
     countByID.show()
+
+    join.rdd.saveAsTextFile("file:///Users/himanshu/git/SparkRDDs/target/output/")
 
   }
 

@@ -14,11 +14,11 @@ object GroupBy {
 
   def main(args: Array[String]) {
     
-    val property = new PropertiesHelper(args, 2);
+  //  val property = new PropertiesHelper(args, 2);
     
-    val filePath = property.getValue("inputFile");
+    val filePath = "src/main/resources/InputFile.txt"
     
-    val outputPath = property.getValue("outputPath");
+    val outputPath = "target/outputpath/";
 
     val conf = new SparkConf().setAppName("Group By Example").setMaster("local")
 
