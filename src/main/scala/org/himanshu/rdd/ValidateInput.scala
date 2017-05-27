@@ -20,9 +20,9 @@ object ValidateInput {
 
     val newInputRDD = inputRDD.map(line => line.split(","))
 
-    val errorRows = newInputRDD.filter(p => DateUtility.isDateValid(p(4), "yyyyMMdd"))
+    val errorRows = newInputRDD.filter(p => !DateUtility.isDateValid(p(4), "yyyyMMdd"))
 
-    print("Count is " + errorRows.count())
+    print("Error Count is " + errorRows.count())
 
     errorRows.saveAsTextFile("target/output")
 
