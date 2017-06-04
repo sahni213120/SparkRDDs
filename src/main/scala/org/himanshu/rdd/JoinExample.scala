@@ -19,6 +19,8 @@ object JoinExample {
     //Read second file into an RDD
     val addressRDD = sc.textFile(args(1))
 
+
+
     //Convert into key value RDD
     val keyValueInputNamesRDD = inputNamesRDD.map { x => (x.split(",")) }.map { x => (x(0), x) }
 

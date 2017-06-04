@@ -29,6 +29,8 @@ object ReadingFileSparkSQL {
       map(p =>
         Person(p(0).trim.toInt, p(1), p(2), p(3).trim())).toDF()
 
+
+
     //show data in data frame
     person.show()
     //show schema

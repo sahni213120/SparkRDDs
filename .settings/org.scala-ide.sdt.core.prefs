@@ -1,4 +1,5 @@
 //src/main/resources=main
+//src/main/scala=main
 P=
 Xcheckinit=false
 Xdisable-assertions=false

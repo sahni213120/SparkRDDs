@@ -1,0 +1,9 @@
+{
+  "sourceTableName" : "movies_cdc",
+  "targetTableName" : "movies_master",
+  "sourceKeyColumn" : "movieId",
+  "targetKeyCOlumn" : "movieId",
+  "sourceHeaderString" : "movieId,title,genres",
+  "targetHeaderString" : "movieId,title,genres,status",
+  "fileDelimiter" : ","
+}
