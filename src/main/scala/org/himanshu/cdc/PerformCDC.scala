@@ -105,7 +105,7 @@ class PerformCDC(cdcDataFrame: DataFrame, masterDataFrame: DataFrame, cdcPropert
     val updatedRecordOld = getUpdatedRecordsOld(joinResults)
     val noChangedRecords = getNotChangedRecordsMaster(joinResults)
 
-    return newRecords.union(updatedRecordsNew).union(updatedRecordOld).union(noChangedRecords).coalesce(1)
+    return getFinalResults(newRecords,updatedRecordsNew,updatedRecordOld,noChangedRecords)
   }
 
 }
