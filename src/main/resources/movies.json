@@ -1,4 +1,5 @@
 {
+  "jobName" : "CDC Example",
   "sourceTableName" : "movies_cdc",
   "targetTableName" : "movies_master",
   "sourceKeyColumn" : "movieId",

@@ -5,15 +5,16 @@ import org.apache.spark.sql.functions._
 import org.himanshu.helper.{CDCProperties, Constants}
 
 /**
+  * Class used to perform CDC Operations between two data frames
   * Created by himanshu on 6/4/2017.
   */
-class PerformCDC(cdcDataFrame: DataFrame, masterDataFrame: DataFrame, cdcProperties: CDCProperties) {
-
+class PerformCDC(cdcDataFrame: DataFrame, masterDataFrame: DataFrame, cdcProperties: CDCProperties) extends CDC {
 
   /**
     * Performs a full outer join between two given dataframes
     * @return dataframe after join
     */
+  @Override
   def join: DataFrame = {
 
     return cdcDataFrame.as(Constants.CDC_TABLE_ALIAS) join(masterDataFrame.as("master"), col(Constants.CDC_TABLE_ALIAS + "." + cdcProperties.getSourceKeyColumn)
@@ -25,13 +26,14 @@ class PerformCDC(cdcDataFrame: DataFrame, masterDataFrame: DataFrame, cdcPropert
     * @param joinResults
     * @return data with new records
     */
+  @Override
   def getNewRecords(joinResults: DataFrame): DataFrame = {
     //TODO - This has to be made dynamic
     val columnList = cdcProperties.getSourceColumns
 
     return joinResults.filter(joinResults(Constants.MASTER_TABLE_ALIAS + "." + cdcProperties.getTargetKeyCOlumn).isNull)
       .select(Constants.CDC_TABLE_ALIAS + "." + columnList(0), Constants.CDC_TABLE_ALIAS + "." + columnList(1),
-        Constants.CDC_TABLE_ALIAS + "." + columnList(2)).withColumn(Constants.STATUS_COLUMN, lit(Constants.ACTIVE_STATUS))
+        Constants.CDC_TABLE_ALIAS + "." + columnList(2)).withColumn(Constants.STATUS_COLUMN, lit(Constants.Status.A.toString))
   }
 
   /**
@@ -39,13 +41,14 @@ class PerformCDC(cdcDataFrame: DataFrame, masterDataFrame: DataFrame, cdcPropert
     * @param joinResults
     * @return data with updated active records
     */
+  @Override
   def getUpdatedRecordsNew(joinResults: DataFrame): DataFrame = {
     //TODO - This has to be made dynamic
     val columnList = cdcProperties.getSourceColumns
 
     return joinResults.filter(joinResults(Constants.MASTER_TABLE_ALIAS + "." + cdcProperties.getTargetKeyCOlumn).isNotNull && joinResults(Constants.CDC_TABLE_ALIAS + "." + cdcProperties.getSourceKeyColumn).isNotNull)
       .select(Constants.CDC_TABLE_ALIAS + "." + columnList(0), Constants.CDC_TABLE_ALIAS + "." + columnList(1),
-        Constants.CDC_TABLE_ALIAS + "." + columnList(2)).withColumn(Constants.STATUS_COLUMN, lit(Constants.ACTIVE_STATUS))
+        Constants.CDC_TABLE_ALIAS + "." + columnList(2)).withColumn(Constants.STATUS_COLUMN, lit(Constants.Status.A.toString))
   }
 
   /**
@@ -53,6 +56,7 @@ class PerformCDC(cdcDataFrame: DataFrame, masterDataFrame: DataFrame, cdcPropert
     * @param joinResults
     * @return data with updated expired records
     */
+  @Override
   def getUpdatedRecordsOld(joinResults : DataFrame) : DataFrame = {
 
     //TODO - This has to be made dynamic
@@ -60,7 +64,7 @@ class PerformCDC(cdcDataFrame: DataFrame, masterDataFrame: DataFrame, cdcPropert
 
     return joinResults.filter(joinResults(Constants.MASTER_TABLE_ALIAS + "." + cdcProperties.getTargetKeyCOlumn).isNotNull && joinResults(Constants.CDC_TABLE_ALIAS + "." + cdcProperties.getSourceKeyColumn).isNotNull)
       .select(Constants.MASTER_TABLE_ALIAS + "." + columnList(0), Constants.MASTER_TABLE_ALIAS + "." + columnList(1),
-        Constants.MASTER_TABLE_ALIAS + "." + columnList(2)).withColumn(Constants.STATUS_COLUMN,lit(Constants.INACTIVE_STATUS))
+        Constants.MASTER_TABLE_ALIAS + "." + columnList(2)).withColumn(Constants.STATUS_COLUMN,lit(Constants.Status.I.toString))
 
   }
 
@@ -69,6 +73,7 @@ class PerformCDC(cdcDataFrame: DataFrame, masterDataFrame: DataFrame, cdcPropert
     * @param joinResults
     * @return
     */
+  @Override
   def getNotChangedRecordsMaster(joinResults : DataFrame) : DataFrame = {
 
     //TODO - This has to be made dynamic
@@ -87,6 +92,7 @@ class PerformCDC(cdcDataFrame: DataFrame, masterDataFrame: DataFrame, cdcPropert
     * @param notChangedRecords
     * @return final data set
     */
+  @Override
   def getFinalResults (newRecords : DataFrame, updatedRecordsNew : DataFrame, updatedRecordsOld : DataFrame,
                        notChangedRecords : DataFrame) : DataFrame = {
 
@@ -97,6 +103,7 @@ class PerformCDC(cdcDataFrame: DataFrame, masterDataFrame: DataFrame, cdcPropert
     * Driver method for this class
     * @return Returns final data frame
     */
+  @Override
   def run(): DataFrame ={
 
     val joinResults = join

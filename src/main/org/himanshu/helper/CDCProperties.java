@@ -30,6 +30,9 @@ public class CDCProperties {
 
     private String fileDelimiter;
 
+    private String jobName;
+
+
     public String getSourceTableName() {
         return sourceTableName;
     }
@@ -92,6 +95,14 @@ public class CDCProperties {
 
     public String[] getTargetColumns() {
         return targetHeaderString.split(fileDelimiter);
+    }
+
+    public String getJobName() {
+        return jobName;
+    }
+
+    public void setJobName(String jobName) {
+        this.jobName = jobName;
     }
 
     public static CDCProperties getCDCProperties(String jsonFileLocation) throws IOException {

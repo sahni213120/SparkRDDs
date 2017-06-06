@@ -19,7 +19,7 @@ object EntryProgram {
     val cdcProperties = CDCProperties.getCDCProperties(commandLineArgs.getMetaFileLocation)
 
     //Create spark session
-    val spark = SparkSession.builder().appName("CDC Example").master("local").getOrCreate()
+    val spark = SparkSession.builder().appName(cdcProperties.getJobName).master("local").getOrCreate()
 
     //Read master data
     val master = new ReadWriteService(spark, commandLineArgs.getMasterLocation, cdcProperties.getTargetHeaderString,
