@@ -17,6 +17,7 @@ class PerformCDC(cdcDataFrame: DataFrame, masterDataFrame: DataFrame, cdcPropert
   @Override
   def join: DataFrame = {
 
+    //cdc.movieid == master.movieid
     return cdcDataFrame.as(Constants.CDC_TABLE_ALIAS) join(masterDataFrame.as("master"), col(Constants.CDC_TABLE_ALIAS + "." + cdcProperties.getSourceKeyColumn)
       === col(Constants.MASTER_TABLE_ALIAS + "." + cdcProperties.getTargetKeyCOlumn), Constants.FULL_OUTER_JOIN)
   }
