@@ -1,0 +1,26 @@
+{
+  "objectName": "Product",
+  "objectDescription" : "Product Data",
+  "schema": [
+    {
+      "columnName": "countryName",
+       "dataType": "String",
+       "maxLength": 40,
+       "mandatory": true,
+       "validationRequired": true
+    },
+    {  "columnName": "originCountryName",
+       "dataType": "String",
+       "maxLength": 40,
+       "mandatory": true,
+       "validationRequired": false
+    },
+    {  "columnName": "count",
+       "dataType": "Integer",
+       "maxLength": 2,
+       "mandatory": true,
+       "validationRequired": true
+    }
+    ]
+}
+
