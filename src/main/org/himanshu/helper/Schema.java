@@ -2,6 +2,7 @@ package org.himanshu.helper;
 
 import com.fasterxml.jackson.annotation.*;
 
+import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -13,7 +14,7 @@ import java.util.Map;
         "mandatory",
         "validationRequired"
 })
-public class Schema {
+public class Schema implements Serializable {
 
     @JsonProperty("columnName")
     private String columnName;

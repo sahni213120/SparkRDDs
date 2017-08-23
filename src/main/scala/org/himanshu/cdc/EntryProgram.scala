@@ -1,6 +1,7 @@
 package scala.org.himanshu.cdc
 
 import org.apache.spark.sql.SparkSession
+import org.codehaus.plexus.util.FileUtils
 import org.himanshu.helper.{CDCProperties, CommandLineArgs}
 
 import scala.org.himanshu.cdc.helper.ReadWriteService
@@ -33,7 +34,8 @@ object EntryProgram {
     val finalOutput = new PerformCDC(cdc, master, cdcProperties).run
 
     //Write final output to disk
-    finalOutput.write.format("com.databricks.spark.csv").save(commandLineArgs.getTargetLocation)
+
+    finalOutput.write.format("com.databricks.spark.csv").save(commandLineArgs.getValidLocation)
 
   }
 

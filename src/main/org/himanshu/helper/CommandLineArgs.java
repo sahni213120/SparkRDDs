@@ -18,11 +18,14 @@ public class CommandLineArgs {
     @Option(name = "--sourceLocation",usage = "location of source file" , required = true)
     private String sourceLocation;
 
-    @Option(name = "--masterLocation",usage = "location of master file", required = true)
+    @Option(name = "--masterLocation",usage = "location of master file", required = false)
     private String masterLocation;
 
-    @Option(name = "--targetFileLocation",usage = "location of target file", required = true )
-    private String targetLocation;
+    @Option(name = "--validFileLocation",usage = "location of target file", required = true )
+    private String validLocation;
+
+    @Option(name = "--errorFileLocation",usage = "location of target file", required = false )
+    private String errorLocation;
 
     @Option(name = "--metaFileLocation", usage = "location of meta (json file)",required = true)
     private String metaFileLocation;
@@ -43,12 +46,20 @@ public class CommandLineArgs {
         this.masterLocation = masterLocation;
     }
 
-    public String getTargetLocation() {
-        return targetLocation;
+    public String getValidLocation() {
+        return validLocation;
     }
 
-    public void setTargetLocation(String targetLocation) {
-        this.targetLocation = targetLocation;
+    public void setValidLocation(String targetLocation) {
+        this.validLocation = targetLocation;
+    }
+
+    public String getErrorLocation() {
+        return errorLocation;
+    }
+
+    public void setErrorLocation(String errorLocation) {
+        this.errorLocation = errorLocation;
     }
 
     public String getMetaFileLocation() {
