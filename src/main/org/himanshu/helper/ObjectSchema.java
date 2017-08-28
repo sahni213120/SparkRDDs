@@ -1,13 +1,11 @@
 package org.himanshu.helper;
 
 import com.fasterxml.jackson.annotation.*;
-import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.io.File;
 import java.io.IOException;
 import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -19,15 +17,18 @@ import java.util.Map;
 @JsonPropertyOrder({
         "objectName",
         "objectDescription",
+        "fileDelimiter",
         "schema"
 })
-public class ObjectSchema implements Serializable{
+public class ObjectSchema implements Serializable {
 
 
     @JsonProperty("objectName")
     private String objectName;
     @JsonProperty("objectDescription")
     private String objectDescription;
+    @JsonProperty("fileDelimiter")
+    private String fileDelimiter;
     @JsonProperty("schema")
     private List<Schema> schema = null;
     @JsonIgnore
@@ -51,6 +52,14 @@ public class ObjectSchema implements Serializable{
     @JsonProperty("objectDescription")
     public void setObjectDescription(String objectDescription) {
         this.objectDescription = objectDescription;
+    }
+
+    public String getFileDelimiter() {
+        return fileDelimiter;
+    }
+
+    public void setFileDelimiter(String fileDelimiter) {
+        this.fileDelimiter = fileDelimiter;
     }
 
     @JsonProperty("schema")

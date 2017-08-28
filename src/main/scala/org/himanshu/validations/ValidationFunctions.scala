@@ -60,7 +60,7 @@ object ValidationFunctions {
   }
 
   def main(args: Array[String]): Unit = {
-    println(isValidDate("20160101", "YYYYMMDD"))
+    println(isValidDate("20160101", "yyyyMMdd"))
   }
 
 

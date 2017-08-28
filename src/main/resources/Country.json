@@ -1,6 +1,8 @@
 {
   "objectName": "Product",
   "objectDescription" : "Product Data",
+  "fileDelimiter" : ",",
+  "fileFormat" : "Text",
   "schema": [
     {
       "columnName": "countryName",
