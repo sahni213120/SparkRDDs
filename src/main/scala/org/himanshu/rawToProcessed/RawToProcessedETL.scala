@@ -77,6 +77,7 @@ class RawToProcessedETL(spark: SparkSession, objectSchema: ObjectSchema) extends
 
     //Get Valid Data
     val validRDD = getValidRDD(newRDD)
+    //
 
     //Get Rejected Data
     val rejectRDD = getRejectRDD(newRDD)
