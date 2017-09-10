@@ -15,7 +15,7 @@ public class CommandLineArgs {
         parseArgs(args);
     }
 
-    @Option(name = "--sourceLocation",usage = "location of source file" , required = true)
+    @Option(name = "--sourceLocation",usage = "location of source file" , required = false)
     private String sourceLocation;
 
     @Option(name = "--masterLocation",usage = "location of master file", required = false)
