@@ -1,0 +1,20 @@
+{
+  "jobName": "Product_CDC",
+  "jobDescription": "Product Data",
+  "table": [
+    {
+      "tableName": "movies_cdc",
+      "headerString": "movieId,title,genres",
+      "location": "src/main/resources/movies_cdc.csv"
+    },
+    {
+      "tableName": "movies_master",
+      "headerString": "movieId,title,genres,status",
+      "location": "src/main/resources/movies_master.csv"
+    }
+  ],
+  "newInsertsQuery": "SELECT cdc.movieId, cdc.title, cdc.genres from movies_cdc cdc left outer join movies_master master on (cdc.movieId = master.movieId) where master.movieId is null",
+  "updatedRecordsInsertsQuery": "SELECT cdc.movieId, cdc.title, cdc.genres from movies_cdc cdc inner join movies_master master on (cdc.movieId = master.movieId)",
+  "updatedRecordsUpdatesQuery": "SELECT master.movieId, master.title, master.genres from movies_cdc cdc inner join movies_master master on (cdc.movieId = master.movieId)",
+  "unchangedRecordsQuery": "SELECT master.movieId, master.title, master.genres, master.status from movies_master master left join movies_cdc cdc on (cdc.movieId = master.movieId) where cdc.movieId is null"
+}

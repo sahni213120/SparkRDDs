@@ -7,7 +7,7 @@ import scala.org.himanshu.validations.ValidationFunctions
 
 /**
   * Created by himanshu on 8/20/2017.
-  */
+  *///
 object Validator {
 
   def performValidations(row: String, objectSchema: ObjectSchema): (String, String) = {
@@ -17,7 +17,6 @@ object Validator {
     var errorCode = "";
 
     val schema = objectSchema.getSchema;
-
 
     if (ValidationFunctions.isRowSizeValid(schema.size(), rowArray.size).isEmpty) {
 

@@ -13,88 +13,28 @@ public class CDCProperties {
     private static CDCProperties cdcProperties;
 
     private CDCProperties() {
-
     }
-
-    private String sourceTableName;
-
-    private String targetTableName;
-
-    private String sourceKeyColumn;
-
-    private String targetKeyColumn;
-
-    private String sourceHeaderString;
-
-    private String targetHeaderString;
-
-    private String fileDelimiter;
 
     private String jobName;
 
+    private String jobDescription;
 
-    public String getSourceTableName() {
-        return sourceTableName;
+    private Table[] table;
+
+    private String newInsertsQuery;
+
+    private String updatedRecordsInsertsQuery;
+
+    private String updatedRecordsUpdatesQuery;
+
+    private String unchangedRecordsQuery;
+
+    public static CDCProperties getCdcProperties() {
+        return cdcProperties;
     }
 
-    public void setSourceTableName(String sourceTableName) {
-        this.sourceTableName = sourceTableName;
-    }
-
-    public String getTargetTableName() {
-        return targetTableName;
-    }
-
-    public void setTargetTableName(String targetTableName) {
-        this.targetTableName = targetTableName;
-    }
-
-    public String getSourceKeyColumn() {
-        return sourceKeyColumn;
-    }
-
-    public void setSourceKeyColumn(String sourceKeyColumn) {
-        this.sourceKeyColumn = sourceKeyColumn;
-    }
-
-    public String getTargetKeyCOlumn() {
-        return targetKeyColumn;
-    }
-
-    public void setTargetKeyCOlumn(String targetKeyCOlumn) {
-        this.targetKeyColumn = targetKeyCOlumn;
-    }
-
-    public String getSourceHeaderString() {
-        return sourceHeaderString;
-    }
-
-    public void setSourceHeaderString(String sourceHeaderString) {
-        this.sourceHeaderString = sourceHeaderString;
-    }
-
-    public String getTargetHeaderString() {
-        return targetHeaderString;
-    }
-
-    public void setTargetHeaderString(String targetHeaderString) {
-        this.targetHeaderString = targetHeaderString;
-    }
-
-    public String getFileDelimiter() {
-        return fileDelimiter;
-    }
-
-    public void setFileDelimiter(String fileDelimiter) {
-        this.fileDelimiter = fileDelimiter;
-    }
-
-    public String[] getSourceColumns() {
-        return sourceHeaderString.split(fileDelimiter);
-    }
-
-    public String[] getTargetColumns() {
-        return targetHeaderString.split(fileDelimiter);
+    public static void setCdcProperties(CDCProperties cdcProperties) {
+        CDCProperties.cdcProperties = cdcProperties;
     }
 
     public String getJobName() {
@@ -103,6 +43,54 @@ public class CDCProperties {
 
     public void setJobName(String jobName) {
         this.jobName = jobName;
+    }
+
+    public String getJobDescription() {
+        return jobDescription;
+    }
+
+    public void setJobDescription(String jobDescription) {
+        this.jobDescription = jobDescription;
+    }
+
+    public Table[] getTable() {
+        return table;
+    }
+
+    public void setTable(Table[] table) {
+        this.table = table;
+    }
+
+    public String getNewInsertsQuery() {
+        return newInsertsQuery;
+    }
+
+    public void setNewInsertsQuery(String newInsertsQuery) {
+        this.newInsertsQuery = newInsertsQuery;
+    }
+
+    public String getUpdatedRecordsInsertsQuery() {
+        return updatedRecordsInsertsQuery;
+    }
+
+    public void setUpdatedRecordsInsertsQuery(String updatedRecordsInsertsQuery) {
+        this.updatedRecordsInsertsQuery = updatedRecordsInsertsQuery;
+    }
+
+    public String getUpdatedRecordsUpdatesQuery() {
+        return updatedRecordsUpdatesQuery;
+    }
+
+    public void setUpdatedRecordsUpdatesQuery(String updatedRecordsUpdatesQuery) {
+        this.updatedRecordsUpdatesQuery = updatedRecordsUpdatesQuery;
+    }
+
+    public String getUnchangedRecordsQuery() {
+        return unchangedRecordsQuery;
+    }
+
+    public void setUnchangedRecordsQuery(String unchangedRecordsQuery) {
+        this.unchangedRecordsQuery = unchangedRecordsQuery;
     }
 
     public static CDCProperties getCDCProperties(String jsonFileLocation) throws IOException {

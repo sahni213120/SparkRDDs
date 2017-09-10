@@ -22,20 +22,9 @@ object EntryProgram {
     //Create spark session
     val spark = SparkSession.builder().appName(cdcProperties.getJobName).master("local").getOrCreate()
 
-    //Read master data
-    val master = new ReadWriteService(spark, commandLineArgs.getMasterLocation, cdcProperties.getTargetHeaderString,
-      cdcProperties.getFileDelimiter).readAndGetDF()
+    //Perform CDC
+    val finalOutput = new PerformCDC(cdcProperties, spark).run(commandLineArgs.getValidLocation)
 
-    //Read changed data
-    val cdc = new ReadWriteService(spark, commandLineArgs.getSourceLocation, cdcProperties.getSourceHeaderString,
-      cdcProperties.getFileDelimiter).readAndGetDF()
-
-    //Perform Transformations
-    val finalOutput = new PerformCDC(cdc, master, cdcProperties).run
-
-    //Write final output to disk
-
-    finalOutput.write.format("com.databricks.spark.csv").save(commandLineArgs.getValidLocation)
 
   }
 

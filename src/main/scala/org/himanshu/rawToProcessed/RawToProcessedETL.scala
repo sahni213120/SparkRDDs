@@ -65,7 +65,7 @@ class RawToProcessedETL(spark: SparkSession, objectSchema: ObjectSchema) extends
   def load(validRDD: RDD[String], validLocation: String, rejectRDD: RDD[String], rejectLocation: String, rejectSummaryRDD: RDD[String], rejectSummaryLocation: String): Unit = {
     ReadWriteService.write(validRDD, validLocation, "Text")
     ReadWriteService.write(rejectRDD, rejectLocation, "Text")
-    ReadWriteService.write(rejectSummaryRDD, rejectSummaryLocation, "Text")
+ //   ReadWriteService.write(rejectSummaryRDD, rejectSummaryLocation, "Text")
   }
 
   def run(commandLineArgs: CommandLineArgs): Unit = {

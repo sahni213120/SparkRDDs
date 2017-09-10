@@ -8,14 +8,14 @@ import org.apache.spark.sql.DataFrame
   */
 trait CDC {
 
-  def join : DataFrame
-  def getNewRecords(joinResults : DataFrame) : DataFrame
-  def getUpdatedRecordsNew(joinResults: DataFrame): DataFrame
-  def getUpdatedRecordsOld(joinResults: DataFrame): DataFrame
-  def getNotChangedRecordsMaster(joinResults : DataFrame) : DataFrame
+  def createDataFrames
+  def getNewRecords : DataFrame
+  def getUpdatedRecordsNew : DataFrame
+  def getUpdatedRecordsOld : DataFrame
+  def getNotChangedRecordsMaster : DataFrame
   def getFinalResults (newRecords : DataFrame, updatedRecordsNew : DataFrame, updatedRecordsOld : DataFrame,
                        notChangedRecords : DataFrame) : DataFrame
-  def run(): DataFrame
+  def run(outputLocation : String)
 
 
 }

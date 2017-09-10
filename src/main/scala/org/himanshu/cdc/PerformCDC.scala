@@ -1,119 +1,75 @@
 package scala.org.himanshu.cdc
 
-import org.apache.spark.sql.DataFrame
+import org.apache.spark.sql.{DataFrame, SparkSession}
 import org.apache.spark.sql.functions._
 import org.himanshu.helper.{CDCProperties, Constants}
+
+import scala.org.himanshu.cdc.helper.ReadWriteService
 
 /**
   * Class used to perform CDC Operations between two data frames
   * Created by himanshu on 6/4/2017.
   */
-class PerformCDC(cdcDataFrame: DataFrame, masterDataFrame: DataFrame, cdcProperties: CDCProperties) extends CDC {
+class PerformCDC(cdcProperties: CDCProperties, spark: SparkSession) extends CDC {
 
-  /**
-    * Performs a full outer join between two given dataframes
-    * @return dataframe after join
-    */
-  @Override
-  def join: DataFrame = {
+  override def createDataFrames: Unit = {
+    val tables = cdcProperties.getTable
 
-    //cdc.movieid == master.movieid
-    return cdcDataFrame.as(Constants.CDC_TABLE_ALIAS) join(masterDataFrame.as("master"), col(Constants.CDC_TABLE_ALIAS + "." + cdcProperties.getSourceKeyColumn)
-      === col(Constants.MASTER_TABLE_ALIAS + "." + cdcProperties.getTargetKeyCOlumn), Constants.FULL_OUTER_JOIN)
+    for (table <- tables) {
+      val df = new ReadWriteService(spark, table.getLocation, table.getHeaderString, ",").readAndGetDF()
+      df.createOrReplaceTempView(table.getTableName)
+
+    }
   }
 
-  /**
-    * Identifies new records that came in today's load by checking where master key is null.
-    * @param joinResults
-    * @return data with new records
-    */
-  @Override
-  def getNewRecords(joinResults: DataFrame): DataFrame = {
-    //TODO - This has to be made dynamic
-    val columnList = cdcProperties.getSourceColumns
+  override def getNewRecords: DataFrame = {
 
-    return joinResults.filter(joinResults(Constants.MASTER_TABLE_ALIAS + "." + cdcProperties.getTargetKeyCOlumn).isNull)
-      .select(Constants.CDC_TABLE_ALIAS + "." + columnList(0), Constants.CDC_TABLE_ALIAS + "." + columnList(1),
-        Constants.CDC_TABLE_ALIAS + "." + columnList(2)).withColumn(Constants.STATUS_COLUMN, lit(Constants.Status.A.toString))
-  }
-
-  /**
-    * Identify Updated Records
-    * @param joinResults
-    * @return data with updated active records
-    */
-  @Override
-  def getUpdatedRecordsNew(joinResults: DataFrame): DataFrame = {
-    //TODO - This has to be made dynamic
-    val columnList = cdcProperties.getSourceColumns
-
-    return joinResults.filter(joinResults(Constants.MASTER_TABLE_ALIAS + "." + cdcProperties.getTargetKeyCOlumn).isNotNull && joinResults(Constants.CDC_TABLE_ALIAS + "." + cdcProperties.getSourceKeyColumn).isNotNull)
-      .select(Constants.CDC_TABLE_ALIAS + "." + columnList(0), Constants.CDC_TABLE_ALIAS + "." + columnList(1),
-        Constants.CDC_TABLE_ALIAS + "." + columnList(2)).withColumn(Constants.STATUS_COLUMN, lit(Constants.Status.A.toString))
-  }
-
-  /**
-    * Identify Updated Records
-    * @param joinResults
-    * @return data with updated expired records
-    */
-  @Override
-  def getUpdatedRecordsOld(joinResults : DataFrame) : DataFrame = {
-
-    //TODO - This has to be made dynamic
-    val columnList = cdcProperties.getTargetColumns
-
-    return joinResults.filter(joinResults(Constants.MASTER_TABLE_ALIAS + "." + cdcProperties.getTargetKeyCOlumn).isNotNull && joinResults(Constants.CDC_TABLE_ALIAS + "." + cdcProperties.getSourceKeyColumn).isNotNull)
-      .select(Constants.MASTER_TABLE_ALIAS + "." + columnList(0), Constants.MASTER_TABLE_ALIAS + "." + columnList(1),
-        Constants.MASTER_TABLE_ALIAS + "." + columnList(2)).withColumn(Constants.STATUS_COLUMN,lit(Constants.Status.I.toString))
+    return spark.sql(cdcProperties.getNewInsertsQuery)
+      .withColumn(Constants.STATUS_COLUMN, lit(Constants.Status.A.toString))
 
   }
 
-  /**
-    * Identify records from master which have not changed
-    * @param joinResults
-    * @return
-    */
-  @Override
-  def getNotChangedRecordsMaster(joinResults : DataFrame) : DataFrame = {
+  override def getUpdatedRecordsNew: DataFrame = {
 
-    //TODO - This has to be made dynamic
-    val columnList = cdcProperties.getTargetColumns
-
-    return joinResults.where(joinResults(Constants.CDC_TABLE_ALIAS + "." + cdcProperties.getSourceKeyColumn).isNull)
-      .select(Constants.MASTER_TABLE_ALIAS + "." + columnList(0), Constants.MASTER_TABLE_ALIAS + "." + columnList(1),
-        Constants.MASTER_TABLE_ALIAS + "." + columnList(2),Constants.MASTER_TABLE_ALIAS + "." + columnList(3))
+    return spark.sql(cdcProperties.getUpdatedRecordsInsertsQuery)
+      .withColumn(Constants.STATUS_COLUMN, lit(Constants.Status.A.toString))
   }
 
-  /**
-    * Performs a union of all the data frames to provide final valid data set
-    * @param newRecords
-    * @param updatedRecordsNew
-    * @param updatedRecordsOld
-    * @param notChangedRecords
-    * @return final data set
-    */
-  @Override
-  def getFinalResults (newRecords : DataFrame, updatedRecordsNew : DataFrame, updatedRecordsOld : DataFrame,
-                       notChangedRecords : DataFrame) : DataFrame = {
 
+  override def getUpdatedRecordsOld: DataFrame = {
+    return spark.sql(cdcProperties.getUpdatedRecordsUpdatesQuery)
+      .withColumn(Constants.STATUS_COLUMN, lit(Constants.Status.I.toString))
+
+  }
+
+  override def getNotChangedRecordsMaster: DataFrame = {
+    return spark.sql(cdcProperties.getUnchangedRecordsQuery)
+
+  }
+
+  override def getFinalResults(newRecords: DataFrame, updatedRecordsNew: DataFrame, updatedRecordsOld: DataFrame,
+                               notChangedRecords: DataFrame): DataFrame = {
     return newRecords.union(updatedRecordsNew).union(updatedRecordsOld).union(notChangedRecords).coalesce(1)
   }
 
+
   /**
     * Driver method for this class
+    *
     * @return Returns final data frame
     */
-  @Override
-  def run(): DataFrame ={
+  override def run(outputLocation: String) = {
 
-    val joinResults = join
-    val newRecords = getNewRecords(joinResults)
-    val updatedRecordsNew = getUpdatedRecordsNew(joinResults)
-    val updatedRecordOld = getUpdatedRecordsOld(joinResults)
-    val noChangedRecords = getNotChangedRecordsMaster(joinResults)
+    createDataFrames
+    val newRecords = getNewRecords
+    val updatedRecordsNew = getUpdatedRecordsNew
+    val updatedRecordOld = getUpdatedRecordsOld
+    val noChangedRecords = getNotChangedRecordsMaster
 
-    return getFinalResults(newRecords,updatedRecordsNew,updatedRecordOld,noChangedRecords)
+    val finalOutput = getFinalResults(newRecords, updatedRecordsNew, updatedRecordOld, noChangedRecords)
+
+    finalOutput.write.parquet(outputLocation)
+
   }
 
 }
