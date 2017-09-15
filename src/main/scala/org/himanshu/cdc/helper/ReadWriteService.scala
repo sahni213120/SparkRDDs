@@ -17,7 +17,7 @@ class ReadWriteService(spark : SparkSession, fileLocation : String, headerString
     val headerSchema = StructType(headerString.split(delimiter).map(fieldName => StructField(fieldName, StringType, true)))
 
     //create input RDD
-    val inputRDD = spark.sparkContext.textFile(fileLocation).map(row => row.split(delimiter))
+    val inputRDD = spark.sparkContext.textFile(fileLocation).map(row => row.split(delimiter,-1))
       .map(a => Row.fromSeq(a))
 
     return spark.sqlContext.createDataFrame(inputRDD , headerSchema)

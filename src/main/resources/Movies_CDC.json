@@ -9,12 +9,12 @@
     },
     {
       "tableName": "movies_master",
-      "headerString": "movieId,title,genres,status",
+      "headerString": "unique_id,movieId,title,genres,edm_active_fl,edm_effctv_dt,edm_xprtn_dt,edm_create_ts,edm_updt_ts",
       "location": "src/main/resources/movies_master.csv"
     }
   ],
-  "newInsertsQuery": "SELECT cdc.movieId, cdc.title, cdc.genres from movies_cdc cdc left outer join movies_master master on (cdc.movieId = master.movieId) where master.movieId is null",
-  "updatedRecordsInsertsQuery": "SELECT cdc.movieId, cdc.title, cdc.genres from movies_cdc cdc inner join movies_master master on (cdc.movieId = master.movieId)",
-  "updatedRecordsUpdatesQuery": "SELECT master.movieId, master.title, master.genres from movies_cdc cdc inner join movies_master master on (cdc.movieId = master.movieId)",
-  "unchangedRecordsQuery": "SELECT master.movieId, master.title, master.genres, master.status from movies_master master left join movies_cdc cdc on (cdc.movieId = master.movieId) where cdc.movieId is null"
+  "newInsertsQuery": "select cdc.movieId, cdc.title, cdc.genres from movies_cdc cdc left outer join movies_master master on (cdc.movieId = master.movieId) where master.movieId is null",
+  "updatedRecordsInsertsQuery": "SELECT master.unique_id,cdc.movieId, cdc.title, cdc.genres from movies_cdc cdc inner join movies_master master on (cdc.movieId = master.movieId) where md5(concat(cdc.title, cdc.genres)) <> md5(concat(master.title, master.genres)) and master.edm_xprtn_dt is null",
+  "updatedRecordsUpdatesQuery": "SELECT master.unique_id,master.movieId, master.title, master.genres, 'N' as edm_active_fl, master.edm_effctv_dt, current_date() as edm_xprtn_dt, master.edm_create_ts, current_timestamp() as edm_updt_ts from movies_cdc cdc inner join movies_master master on (cdc.movieId = master.movieId) where md5(concat(cdc.title, cdc.genres)) <> md5(concat(master.title, master.genres)) and master.edm_xprtn_dt is null",
+  "unchangedRecordsQuery": "SELECT master.* from movies_master master left join movies_cdc cdc on (cdc.movieId = master.movieId) where cdc.movieId is null"
 }
