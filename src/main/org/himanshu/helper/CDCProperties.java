@@ -29,6 +29,10 @@ public class CDCProperties {
 
     private String unchangedRecordsQuery;
 
+    private String targetHeaderColumns;
+
+    private String maxKeyQuery;
+
     public static CDCProperties getCdcProperties() {
         return cdcProperties;
     }
@@ -91,6 +95,22 @@ public class CDCProperties {
 
     public void setUnchangedRecordsQuery(String unchangedRecordsQuery) {
         this.unchangedRecordsQuery = unchangedRecordsQuery;
+    }
+
+    public String getTargetHeaderColumns() {
+        return targetHeaderColumns;
+    }
+
+    public void setTargetHeaderColumns(String targetHeaderColumns) {
+        this.targetHeaderColumns = targetHeaderColumns;
+    }
+
+    public String getMaxKeyQuery() {
+        return maxKeyQuery;
+    }
+
+    public void setMaxKeyQuery(String maxKeyQuery) {
+        this.maxKeyQuery = maxKeyQuery;
     }
 
     public static CDCProperties getCDCProperties(String jsonFileLocation) throws IOException {

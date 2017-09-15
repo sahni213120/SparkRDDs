@@ -1,13 +1,7 @@
 package scala.org.himanshu.cdc
 
-import java.sql.Date
-import java.text.SimpleDateFormat
-import java.time.LocalDateTime
-import java.util
-
-import org.apache.spark.sql.{DataFrame, Row, SparkSession}
 import org.apache.spark.sql.functions._
-import org.apache.spark.sql.types.{LongType, StructField, StructType}
+import org.apache.spark.sql.{DataFrame, SparkSession}
 import org.himanshu.helper.{CDCProperties, Constants}
 
 import scala.org.himanshu.cdc.helper.ReadWriteService
@@ -34,18 +28,16 @@ class PerformCDC(cdcProperties: CDCProperties, spark: SparkSession) extends CDC 
 
     val max = getMaxId
 
-    print("MAX is " + max)
-
-    val rdd =  spark.sql(cdcProperties.getNewInsertsQuery)
+    val rdd = spark.sql(cdcProperties.getNewInsertsQuery)
       .withColumn(Constants.STATUS_COLUMN, lit(Constants.Status.Y.toString))
       .withColumn(Constants.EFFCTV_DT, current_date())
-      .withColumn(Constants.XPRTN_DT, lit(""))
+      .withColumn(Constants.XPRTN_DT, lit("9999-12-31"))
       .withColumn(Constants.CREATE_TS, current_timestamp())
       .withColumn(Constants.UPDT_TS, current_timestamp())
 
-    rdd.createOrReplaceTempView("test")
+    rdd.createOrReplaceTempView("new_records")
 
-    val s= "select row_number() over (order by 1) + " + max + " as unique_id,movieId,title,genres,edm_active_fl,edm_effctv_dt,edm_xprtn_dt,edm_create_ts,edm_updt_ts from test";
+    val s = "select row_number() over (order by 1) + " + max + " as " + cdcProperties.getTargetHeaderColumns + " from new_records";
 
 
     return spark.sql(s)
@@ -57,7 +49,7 @@ class PerformCDC(cdcProperties: CDCProperties, spark: SparkSession) extends CDC 
     return spark.sql(cdcProperties.getUpdatedRecordsInsertsQuery)
       .withColumn(Constants.STATUS_COLUMN, lit(Constants.Status.Y.toString))
       .withColumn(Constants.EFFCTV_DT, current_date())
-      .withColumn(Constants.XPRTN_DT, lit(""))
+      .withColumn(Constants.XPRTN_DT, lit("9999-12-31"))
       .withColumn(Constants.CREATE_TS, current_timestamp())
       .withColumn(Constants.UPDT_TS, current_timestamp())
   }
@@ -100,7 +92,7 @@ class PerformCDC(cdcProperties: CDCProperties, spark: SparkSession) extends CDC 
   }
 
   def getMaxId: String = {
-    return spark.sql("select max(unique_id) from movies_master").head().getString(0)
+    return spark.sql(cdcProperties.getMaxKeyQuery).head().getString(0)
   }
 
 }
